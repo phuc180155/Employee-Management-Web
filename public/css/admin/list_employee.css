@@ -1,0 +1,10 @@
+tfoot input {
+    width: 100%;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.input-box{
+    width: 0%;
+    overflow:hidden
+}
