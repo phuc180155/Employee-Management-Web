@@ -54,7 +54,7 @@ class User extends Authenticatable
 
     public function employee(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(Employee::class, 'id');
+        return $this->hasOne(Employee::class, 'user_id');
     }
 
     public function hasRole($role): bool

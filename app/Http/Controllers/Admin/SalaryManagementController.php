@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Void_;
 
 class SalaryManagementController extends Controller
 {
@@ -129,6 +130,7 @@ class SalaryManagementController extends Controller
             'list_salary' => $list_salary,
             'list_info_detail' => $list_info_detail,
             'status_calculate' => session()->get('status_calculate'),
+            'name' => session()->get('name'),
         ];
 
         return view('admin.salary.list_salary_employee')->with($data);
@@ -183,18 +185,20 @@ class SalaryManagementController extends Controller
         return redirect()->route('admin.salary.employee_salary')->with(['title' => $title]);
     }
 
-    public function calculate_individual_salary($salary_id, $title): \Illuminate\Http\RedirectResponse
+    public function calculate_individual_salary($salary_id, $title, $return=true)
     {
         $salary = Salary::where('id', $salary_id)->first();
+        $info_detail = $salary->info_detail()->first();
+        $employee = $salary->employee()->first();
         $subsidy = $salary->subsidy;
         $allowance = $salary->allowance;
         $insurance = $salary->insurance;
         if (!$subsidy or !$allowance or !$insurance){
-            return redirect()->route('admin.salary.employee_salary')->with(['status_calculate'=>'false', 'title'=>$title]);
+            $name = $employee->first_name.' '.$employee->last_name;
+            if ($return == false)
+                return ['name' => $name, 'status_calculate'=>'false'];
+            return redirect()->route('admin.salary.employee_salary')->with(['status_calculate'=>'false', 'title'=>$title, 'name' => $name]);
         } else {
-            $info_detail = $salary->info_detail()->first();
-            $employee = $salary->employee()->first();
-
             $base_salary = $employee->base_salary;
             $max_leaves = $employee->max_leaves;
 
@@ -210,8 +214,34 @@ class SalaryManagementController extends Controller
             $salary->take_home_pay = round($base_salary + ($subsidy+$allowance)*($dayon/$day) - $insurance - abs(min($max_leaves-$day_left, 0))*$base_salary/$day
                                                   + ($overtime_hours-$undertime_hours)*($base_salary/$day/24), 2);
             $salary->save();
-
         }
+
+        return redirect()->route('admin.salary.employee_salary')->with(['status_calculate'=>'true', 'title'=>$title]);
+
+    }
+
+    public function calculate_all_salary($title)
+    {
+
+        if ($title == 'all'){
+            $salaries = Salary::all();
+        } else if ($title == ' this month'){
+            $cur_month = $this->curMonth();
+            $salaries = Salary::where('month', $cur_month)->get();
+        } else if ($title) {
+            $month = explode('-',$title)[1].'-'.explode('-',$title)[0];
+            $salaries = Salary::where('month', $month)->get();
+        }
+        $fail = '0';
+        foreach ($salaries as $salary){
+            if (!$salary->take_home_pay) {
+                $fail = self::calculate_individual_salary($salary->id, $title, false);
+                if (gettype($fail) == 'array')
+                    break;
+            }
+        }
+        if (gettype($fail) == 'array')
+            return redirect()->route('admin.salary.employee_salary')->with(['status_calculate'=>'false', 'title'=>$title, 'name' => $fail['name']]);
         return redirect()->route('admin.salary.employee_salary')->with(['status_calculate'=>'true', 'title'=>$title]);
     }
 

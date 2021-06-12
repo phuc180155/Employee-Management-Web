@@ -26,6 +26,8 @@
     @yield('css_external_link')
     @yield('js_head_link')
     <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css');
+
         @yield('css-internal-link')
 
         body{
@@ -117,6 +119,19 @@
             -webkit-box-shadow: inset 0 0 10px #000000;
             box-shadow:         inset 0 0 10px #000000;
         }
+        .modal-open {
+            overflow: inherit;
+        }
+        .bg-faded{background-color:#f3f3f3;max-height:500px}
+        .btn-round{border-radius:500px}
+        .btn-round,.btn-round:hover,.btn-round:active{border-color:transparent}
+        .modal.animate {opacity:0}
+        .modal.animate.show {opacity:1}
+        .modal.animate .modal-dialog{-webkit-transform:translate(0,0);-ms-transform: translate(0,0);transform:translate(0,0)}
+        .modal.animate .a-roll{-webkit-animation:rollOut .5s;animation: rollOut .5s}
+        .modal.animate.show .a-roll{-webkit-animation:rollIn .5s;animation:rollIn .5s}
+
+        /*Profile*/
 
 
     </style>
@@ -130,6 +145,9 @@
 
     <div id="content">
         @include('include.app.navbar')
+
+        <!-- Aditional Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 
         <div style="height: 30px; width: 100%!important;  font-size: 14px; position: relative; margin-top: -60px;" class="marquee">
             <strong>Welcome to employee management application</strong>
@@ -154,6 +172,18 @@
     @yield('js')
 
     <script type="text/javascript">
+        $(".modal-trigger").click(function(e){
+            e.preventDefault();
+            dataModal = $(this).attr("data-modal");
+            $("#" + dataModal).css({"display":"block"});
+            // $("body").css({"overflow-y": "hidden"}); //Prevent double scrollbar.
+        });
+
+        $(".close-modal, .modal-sandbox").click(function(){
+            $(".modal").css({"display":"none"});
+            // $("body").css({"overflow-y": "auto"}); //Prevent double scrollbar.
+        });
+
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');

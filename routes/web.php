@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SalaryManagementController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\LeaveController;
+use App\Http\Controllers\Employee\SalaryController;
 
 use App\Http\Controllers\MailController;
 
@@ -29,8 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('homepage.index');
 });
-Route::get('test', function () {
-});
+
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -96,6 +96,7 @@ Route::group(['middleware' => 'auth'], function(){
             Route::post('add-employee', [EmployeeManageController::class, 'store_employee'])->name('store_employee');
             Route::get('edit/{employee_id}', [EmployeeManageController::class,'edit_view'])->name('edit_view');
             Route::post('edit/{employee_id}', [EmployeeManageController::class,'edit'])->name('edit');
+            Route::delete('delete/{employee_id}', [EmployeeManageController::class,'delete'])->name('delete');
         });
 
         Route::prefix('salary')->name('salary.')->group(function(){
@@ -105,6 +106,8 @@ Route::group(['middleware' => 'auth'], function(){
             Route::get('list-salary-employees', [SalaryManagementController::class, 'list_salary_employees'])->name('employee_salary');
             Route::post('list-salary-employees', [SalaryManagementController::class, 'list_salary_employees'])->name('employee_salary_select');
             Route::get('calculate_salary/{salary_id}/{title}', [SalaryManagementController::class, 'calculate_individual_salary'])->name('calculate_salary');
+            Route::get('calculate_salary/{title}', [SalaryManagementController::class, 'calculate_all_salary'])->name('calculate_all_salary');
+
             Route::get('update_fees/{salary_id}/{title}', [SalaryManagementController::class, 'update_fees'])->name('update_fee');
             Route::post('update_fees/{salary_id}/{title}', [SalaryManagementController::class, 'store_fees'])->name('store_fee');
 
@@ -124,6 +127,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::prefix('employee')->name('employee.')->group(function(){
 
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/information', [EmployeeController::class, 'change_information'])->name('information');
 
         Route::prefix('attendance')->name('attendance.')->group(function(){
             Route::get('create-attendance', [AttendanceController::class,'create'])->name('create');
@@ -131,6 +135,11 @@ Route::group(['middleware' => 'auth'], function(){
             Route::put('create-attendance/{attendance_id}', [AttendanceController::class, 'store_exit'])->name('store.exit');
 
             Route::get('list-attendance', [AttendanceController::class,'list'])->name('list');
+        });
+
+        Route::prefix('salary')->name('salary.')->group(function(){
+            Route::get('list-salary', [SalaryController::class, 'list_salaries'])->name('list');
+            Route::post('list-salary', [SalaryController::class, 'list_salaries_range'])->name('get_range');
         });
 
         Route::prefix('leave')->name('leave.')->group(function(){

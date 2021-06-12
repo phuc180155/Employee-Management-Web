@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Attendance;
 use App\Models\Info_Details_Month;
+use App\Models\Leave;
 use App\Models\Role;
 use App\Models\Salary;
 use App\Models\User;
@@ -199,5 +201,42 @@ class EmployeeManageController extends Controller
             'password' => $user->password,
         ]);
         return back()->with('message','Edit employee success');
+    }
+
+    public function delete($employee_id){
+        /**
+         * Delete attendance:
+         */
+        Attendance::where('employee_id', $employee_id)->delete();
+        /**
+         * Delete salary:
+         */
+        $salaries = Salary::where('employee_id', $employee_id)->get();
+        foreach ($salaries as $salary){
+            $salary->info_detail()->delete();
+            $salary->delete();
+        }
+        /**
+         * Delete leave:
+         */
+        $leaves = Leave::where('employee_id', $employee_id)->get();
+        foreach ($leaves as $leave){
+            $leave->format_leave()->delete();
+            $leave->delete();
+        }
+        /**
+         * Convert user->DA
+         */
+        $employee = Employee::where('id', $employee_id)->first();
+        $employee->delete();
+        $user = User::where('id', $employee->user_id)->first();
+        $user->deleted = true;
+        $user->name = 'EM user';
+        $user->save();
+//        $user->roles()->detach();
+//        $user->mails()->detach();
+//        $user->delete();
+
+        return back();
     }
 }

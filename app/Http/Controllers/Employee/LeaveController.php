@@ -37,7 +37,7 @@ class LeaveController extends Controller
     }
 
     public function store_form(){
-        $employee = Auth::user()->employee()->first();
+        $employee = Employee::where('user_id', Auth::user()->id)->first();
         $existDates = $this->leaveRepo->arrayOfExistDay($employee->id, $this->curMonth());
         $this->validate(request(), [
             'multipledays' => 'required'

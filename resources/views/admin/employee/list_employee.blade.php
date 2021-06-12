@@ -4,6 +4,8 @@
 
 @section('css_external_link')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/admin/list_employee.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 @endsection
 
 @section('app-content')
@@ -28,7 +30,7 @@
                     <th style="width: 0; text-align: center;"><small>Address</small></th>
                     <th style="width: 0; text-align: center;"><small>Country</small></th>
                     <th style="width: 30%; text-align: center;"><small>Image</small></th>
-                    <th style="width: 0; text-align: center;"><small>Edit</small></th>
+                    <th style="width: 0; text-align: center;"><small></small></th>
                 </tr>
             </thead>
 
@@ -52,12 +54,49 @@
                             </div>
                         </td>
                         <td style='text-align: center; vertical-align: middle'>
-                            <div class="btn btn-danger">
+                            <div class="btn btn-info" style="width: 100%" title_handmade_bottom="Edit">
                                 <a href="{{route('admin.employee.edit_view', ['employee_id'=>$employee->id])}}">
-                                    <i class="fas fa-edit"></i>
-                                    <small>Edit</small>
+                                    <i class="fas fa-edit" ></i>
+{{--                                    <span style="font-size: 10px">Edit</span>--}}
                                 </a>
                             </div>
+
+                            <br> <br>
+
+                            <div class="btn btn-danger trigger-btn" style="width: 100%" title_handmade_bottom="Delete">
+                                <a href="#delete-modal-{{$loop->index}}" data-toggle="modal">
+                                    <i class="fas fa-trash" ></i>
+{{--                                    <span style="font-size: 10px">Delete</span>--}}
+                                </a>
+                            </div>
+
+
+                            <!-- Modal HTML -->
+                            <div id="delete-modal-{{$loop->index}}" class="modal fade">
+                                <div class="modal-dialog modal-confirm">
+                                    <div class="modal-content">
+                                        <div class="modal-header flex-column">
+                                            <div class="icon-box">
+                                                <i class="material-icons">&#xE5CD;</i>
+                                            </div>
+                                            <h4 class="modal-title w-100">Are you sure?</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Do you really want to delete this account? This process cannot be undone.</p>
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <form method="post" action="{{route('admin.employee.delete', ['employee_id'=>$employee->id])}}">
+                                                @method('delete')
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
                 @endforeach

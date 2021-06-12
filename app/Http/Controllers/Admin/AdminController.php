@@ -37,7 +37,7 @@ class AdminController extends Controller
             foreach ($employees as $employee){
                 /* Tạo bảng lương tháng đó */
                 $salary = Salary::create([
-                    'name' => $employee->firstname.' '.$employee->lastname,
+                    'name' => $employee->first_name.' '.$employee->last_name,
                     'month' => $curMonth,
                     'employee_id' => $employee->id,
                     'subsidy' => null,

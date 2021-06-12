@@ -4,7 +4,7 @@
 
                                 <!-- Home content carousel -->
 
-        <div id="demo" class="carousel slide" data-ride="carousel" data-interval="2000">
+        <div id="demo" class="carousel slide" data-ride="carousel" data-interval="3000">
             <!-- Indicators -->
             <ul class="carousel-indicators">
                 <li data-target="#demo" data-slide-to="0" class="active"></li>

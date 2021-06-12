@@ -37,7 +37,7 @@
                 </div>
                         <!-- Navigation bar -->
                 <div class="for-hover-visible col-lg-6" >
-                    <strong>{{$mail->sender}}</strong> <br>
+                    <strong>{{$senders[$i]}}</strong> <br>
                     <span style="font-family: 'Roboto',serif; font-size: 12px; color:darkgrey"> tới {{$receivers[$i]}} </span>
 
                     <span class="dropdown">
@@ -81,36 +81,48 @@
                     <div class="d-flex">
                         <div class="mr-auto">
 {{--                            /* HERE OK? */--}}
-                            <div class='option-for-mail' style="float:left">
-                                <button id='reply-{{$i}}' style="border: 0; background-color: white" title_handmade_bottom="Reply this mail" >
-                                    <i class="fas fa-reply" ></i>
-                                </button>
-                            </div>
+                            @if ($senders[$i] == 'EM user')
+                                <div class='option-for-mail' style="float:left; display:none">
+                            @else
+                                <div class='option-for-mail' style="float:left">
+                            @endif
+                                    <button id='reply-{{$i}}' style="border: 0; background-color: white" title_handmade_bottom="Reply this mail" >
+                                        <i class="fas fa-reply" ></i>
+                                    </button>
+                                </div>
 
-                            <form class='option-for-mail' method='post' action='{{route('mail.delete_mail', $mail->id)}}' style="float:left">
-                                @csrf
-                                @method('DELETE')
-                                <button id='delete-{{$i}}' style="border: 0; background-color: white"  title_handmade_bottom="Delete this mail">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            @if ($senders[$i] == 'EM user')
+                                <form class='option-for-mail' method='post' action='{{route('mail.delete_mail', $mail->id)}}' style="float:left; display:none">
+                            @else
+                                <form class='option-for-mail' method='post' action='{{route('mail.delete_mail', $mail->id)}}' style="float:left">
+                            @endif
+                                    @csrf
+                                    @method('DELETE')
+                                    <button id='delete-{{$i}}' style="border: 0; background-color: white"  title_handmade_bottom="Delete this mail">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
 
                             <!-- Nếu đã favor rồi thì click vào mất favor -->
-                            <form class='option-for-mail' method='post' action='{{route('mail.mark_mail_favorite', $mail->id)}}' style="float:left">
-                                @csrf
-                                @method('post')
-                                @if ($favorites[$i] == true)
-                                    <input type="hidden" name="favorite" value="true">
-                                    <button id='favorite-{{$i}}' style="border: 0; background-color: white"  type='submit' title_handmade_bottom="Starred">
-                                        <i style="color:yellow" class="fas fa-star"></i>
-                                    </button>
-                                @else
-                                    <input type="hidden" name="favorite" value="false">
-                                    <button id='favorite-{{$i}}' style="border: 0; background-color: white"  type='submit' title_handmade_bottom="Not starred">
-                                        <i  class="fas fa-star"></i>
-                                    </button>
-                                @endif
-                            </form>
+                            @if ($senders[$i] == 'EM user')
+                                <form class='option-for-mail' method='post' action='{{route('mail.mark_mail_favorite', $mail->id)}}' style="float:left; display:none">
+                            @else
+                                <form class='option-for-mail' method='post' action='{{route('mail.mark_mail_favorite', $mail->id)}}' style="float:left">
+                            @endif
+                                    @csrf
+                                    @method('post')
+                                    @if ($favorites[$i] == true)
+                                        <input type="hidden" name="favorite" value="true">
+                                        <button id='favorite-{{$i}}' style="border: 0; background-color: white"  type='submit' title_handmade_bottom="Starred">
+                                            <i style="color:yellow" class="fas fa-star"></i>
+                                        </button>
+                                    @else
+                                        <input type="hidden" name="favorite" value="false">
+                                        <button id='favorite-{{$i}}' style="border: 0; background-color: white"  type='submit' title_handmade_bottom="Not starred">
+                                            <i  class="fas fa-star"></i>
+                                        </button>
+                                    @endif
+                                </form>
                         </div>
                     </div>
                 </div>
@@ -271,22 +283,35 @@
             <div class="col-lg-11">
                 <div class="row">
                     <div class="col-lg-2 d-flex ">
-                        <button type="submit" class="_rep btn btn-outline-secondary mr-auto" style="width: 135px">
-                            <i class="fas fa-reply" ></i>
-                            <span style="font-family: 'Google Sans',serif"> &nbsp;Reply </span>
-                        </button>
+                        @if ($senders[count($senders)-1] == 'EM user')
+                            <button type="submit" class="_rep btn btn-outline-secondary mr-auto" disabled style="width: 135px">
+                        @else
+                            <button type="submit" class="_rep btn btn-outline-secondary mr-auto" style="width: 135px">
+                        @endif
+                                <i class="fas fa-reply" ></i>
+                                <span style="font-family: 'Google Sans',serif"> &nbsp;Reply </span>
+                            </button>
+                    </div>
+
+                    <div class="col-lg-2 d-flex ">
+                        @if ($senders[count($senders)-1] == 'EM user')
+                            <button type="submit" class="_forward btn btn-outline-secondary mr-auto" disabled style="width: 135px">
+                        @else
+                            <button type="submit" class="_forward btn btn-outline-secondary mr-auto" style="width: 135px">
+                        @endif
+                                <i class="fas fa-share-square"></i>
+                                <span style="font-family: 'Google Sans',serif"> Forwarding </span>
+                            </button>
                     </div>
                     <div class="col-lg-2 d-flex ">
-                        <button type="submit" class="_forward btn btn-outline-secondary mr-auto" style="width: 135px">
-                            <i class="fas fa-share-square"></i>
-                            <span style="font-family: 'Google Sans',serif"> Forwarding </span>
-                        </button>
-                    </div>
-                    <div class="col-lg-2 d-flex ">
-                        <button type="submit" class="_new_message btn btn-outline-secondary mr-auto" style="width: 135px">
-                            <i class="fas fa-comments"></i>
-                            <span style="font-family: 'Google Sans',serif"> &nbsp;New message </span>
-                        </button>
+                        @if ($senders[count($senders)-1] == 'EM user')
+                            <button type="submit" class="_new_message btn btn-outline-secondary mr-auto" disabled style="width: 135px">
+                        @else
+                            <button type="submit" class="_new_message btn btn-outline-secondary mr-auto" style="width: 135px">
+                        @endif
+                                <i class="fas fa-comments"></i>
+                                <span style="font-family: 'Google Sans',serif"> &nbsp;New message </span>
+                            </button>
                     </div>
 
                 </div>

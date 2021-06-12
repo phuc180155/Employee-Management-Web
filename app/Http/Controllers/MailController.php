@@ -266,6 +266,7 @@ class MailController extends Controller
             return redirect()->route('mail.'.$uri.'.index');
 
         /* Lấy ảnh+receiver của từng sender trong relevants*/
+        $senders = array();
         $images_arr = array();
         $receivers_arr = array();
         $auxis_hidden_contents_arr = array();
@@ -273,13 +274,31 @@ class MailController extends Controller
 
         foreach ($relevants as $relevant){
             $sender = User::with('employee')->where('email', $relevant->sender)->first();
-            array_push($images_arr, ($sender->hasRole('admin'))?"public/img/admin.jpg":Employee::where('user_id', $sender->id)->first()->image_profile);
-
+            if ($sender->deleted == false) {
+                array_push($senders, $sender->email);
+                array_push($images_arr, ($sender->hasRole('admin')) ? "public/img/admin.jpg" : Employee::where('user_id', $sender->id)->first()->image_profile);
+            } else {
+                array_push($senders, 'EM user');
+                array_push($images_arr,  "public/img/user.jpg");
+            }
             /* Thay mail của receiver đang cần là 'tôi', bỏ mail của user hiện tại(TH khi user reply)*/
             $receivers = $relevant->receivers;
+
+            /* Thay EM user nếu có trong receivers*/
+            $receiver_mails = explode(', ', $receivers);
+            foreach ($receiver_mails as $receiver_mail){
+                foreach($relevant->users as $user) {
+                    if ($user->email == $receiver_mail){
+                        if ($user->deleted == true){
+                            $receivers = str_replace($receiver_mail, 'EM user', $receivers);
+                        }
+                        break;
+                    }
+                }
+            }
+
             $receivers = str_replace($this->current_mail, 'tôi', $receivers);
             array_push($receivers_arr, $receivers);
-
             /* Content của mỗi relevant phải chứa tất cả cha của nó */
 
             $auxis_hidden_content = '';
@@ -317,6 +336,7 @@ class MailController extends Controller
             'root_mail' => Mail::where('id', $root_id)->first(),
             'receivers' => $receivers_arr??null,
             'mails' => $relevants??null,
+            'senders' => $senders??null,
             'auxis_hidden_contents' => $auxis_hidden_contents_arr??null,
             'images' => $images_arr??null,
             'favorites' => $favorite_arr,

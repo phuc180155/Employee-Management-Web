@@ -4,14 +4,26 @@
 
 @section('css_external_link')
     <!-- DataTables -->
-{{--    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>--}}
+    <link rel="stylesheet" href="/css/admin/update_fee.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css"/>
+
+{{--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">--}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+
+
+
     <!-- Date range picker -->
 @endsection
 
 @section('app-content')
     <!--- Content header --->
-    @include('include.app.content_header', ['name' => 'Employees Salary on '.$title, 'pre'=>'Admin', 'cur'=>'List salary'])
+    @if ($title == 'all')
+        @include('include.app.content_header', ['name' => 'Employees Salary', 'pre'=>'Admin', 'cur'=>'List salary'])
+    @else
+        @include('include.app.content_header', ['name' => 'Employees Salary in '.$title, 'pre'=>'Admin', 'cur'=>'List salary'])
+    @endif
+
     <!--- Main content --->
     <br>
 
@@ -111,25 +123,106 @@
                                         <td style='text-align: center; vertical-align: middle'> {{$list_salary[$i]->subsidy??'null'}} </td>
                                         <td style='text-align: center; vertical-align: middle'> {{$list_salary[$i]->allowance??'null'}} </td>
                                         <td style='text-align: center; vertical-align: middle'> {{$list_salary[$i]->insurance??'null'}} </td>
-                                        <td id="total_salary_{{$i+1}}"style='text-align: center; vertical-align: middle'> {{$list_salary[$i]->take_home_pay??'null'}} </td>
+                                        <td id="total_salary_{{$i+1}}" style='text-align: center; vertical-align: middle'> {{$list_salary[$i]->take_home_pay??'null'}} </td>
                                         <td style='text-align: center; vertical-align: middle'>
                                                                                         <!-- Dropdown menu action -->
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                                     <i style="color: red" class="fas fa-bars"></i> &nbsp;Menu
                                                 </button>
                                                 <div style="width: 100px" class="dropdown-menu">
-                                                    <input id="info-detail-{{$i+1}}" type="button" style="width: 100px" class="btn btn-info" value="Detail">
+                                                    <input id="info-detail-{{$i+1}}" type="button" style="width: 100px" class="btn btn-outline-info" value="Detail">
+
                                                     <div style="margin-top:1px; margin-bottom: 1px !important;" class="dropdown-divider"></div>
-                                                    <a  style="width: 100px" class="btn btn-success" href="{{route('admin.salary.update_fee', [$list_salary[$i]->id, $title])}}">Update</a>
+{{--                                                    <a  style="width: 100px" class="btn btn-success" href="{{route('admin.salary.update_fee', [$list_salary[$i]->id, $title])}}">Update</a>--}}
+
+                                                        <a style="width: 100px" class="btn btn-outline-danger" href="#update-fees-{{$i+1}}" data-toggle="modal">
+                                                            Update
+                                                        </a>
+
+
                                                     <div style="margin-top:1px; margin-bottom: 1px !important;" class="dropdown-divider"></div>
-                                                    <a style="width: 100px" class="btn btn-secondary" href="{{route('admin.salary.calculate_salary', [$list_salary[$i]->id, $title])}}">Calculate</a>
+                                                    <a style="width: 100px" class="btn btn-outline-secondary" href="{{route('admin.salary.calculate_salary', [$list_salary[$i]->id, $title])}}">Calculate</a>
                                                     <div style="margin-top:1px; margin-bottom: 1px !important;" class="dropdown-divider"></div>
-                                                    <a style="width: 100px" class="btn btn-danger" href="#">Delete</a>
-                                                    <div style="margin-top:1px; margin-bottom: 1px !important;" class="dropdown-divider"></div>
+{{--                                                    <a style="width: 100px" class="btn btn-danger" href="#">Delete</a>--}}
+{{--                                                    <div style="margin-top:1px; margin-bottom: 1px !important;" class="dropdown-divider"></div>--}}
                                                 </div>
 
-{{--                                                <span id="button-{{$index+1}}"><i class="far fa-bars"></i></span>  -->--}}
-{{--                                                                                                <span class="test{{$index+1}}" id="button-{{$index+1}}" ><i class="fas fa-plus-circle " style="padding-top:6px;color:blue"></i></span>--}}
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="update-fees-{{$i+1}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">Update fees for {{$list_employee[$i]->user->name}} in {{$title}}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+
+                                                            <form method="post" id="form-update-fees-{{$i+1}}" action="{{route('admin.salary.store_fee', [$list_salary[$i]->id, $title])}}" enctype="multipart/form-data">
+                                                                {{ csrf_field() }}
+                                                                <div style="margin-left: 5%;" class="card-body">
+                                                                    <div class="form-group row">
+                                                                        <label for="monthid" class="col-sm-3 col-form-label"><strong>Month</strong> </label>
+                                                                        <div class="col-sm-8">
+                                                                            <input name="" type="text" class="form-control" id="monthid" value="{{$list_salary[$i]->month}}" disabled>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="subsidyid" class="col-sm-3 col-form-label"><strong>Subsidy</strong></label>
+                                                                        <div class="col-sm-8">
+                                                                            <input name="subsidy" type="text" class="form-control" id="subsidyid"
+                                                                                   value="{{old('subsidy')}}">
+                                                                            @error('subsidy')
+                                                                            <div class="text-danger">
+                                                                                {{$message}}
+                                                                            </div>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="allowanceid" class="col-sm-3 col-form-label"><strong>Allowance</strong></label>
+                                                                        <div class="col-sm-8">
+                                                                            <input name="allowance" type="text" class="form-control" id="allowanceid"
+                                                                                   value="{{old('allowance')}}">
+                                                                            @error('allowance')
+                                                                            <div class="text-danger">
+                                                                                {{$message}}
+                                                                            </div>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="insuranceid" class="col-sm-3 col-form-label"><strong>Insurance</strong> </label>
+                                                                        <div class="col-sm-8">
+                                                                            <input name="insurance" type="text" class="form-control" id="insuranceid"
+                                                                                   value="{{old('insurance')}}">
+                                                                            @error('insurance')
+                                                                            <div class="text-danger">
+                                                                                {{$message}}
+                                                                            </div>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if(session('message'))
+                                                                    <div class="text-success">
+                                                                        <strong>{{session()->get('message')}}</strong>
+                                                                    </div>
+                                                                @endif
+                                                            </form>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary" form="form-update-fees-{{$i+1}}">Save changes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
                                         </td>
@@ -150,6 +243,14 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-lg-12 d-flex">
+                        <a class="btn btn-danger ml-auto" href="{{route('admin.salary.calculate_all_salary', $title)}}">Calculate all</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -159,6 +260,11 @@
 
         {{--    source: https://datatables.net/examples/api/row_details.html --}}
         <script>
+
+            function mysubmit(){
+
+            }
+
             $('#specific-month').on('click', function(){
 
                 if ($('#month-form').is(":visible")) {
@@ -169,11 +275,18 @@
            });
         </script>
         <!-- DataTables -->
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+        <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 
         <script>
             /* Formatting function for row details - modify as you need */
+            $('.dropdown-menu').click(function(e) {
+                e.stopPropagation();
+                if ($(e.target).is('[data-toggle=modal]')) {
+                    $($(e.target).data('target')).modal()
+                }
+            });
+
             function format(d ) {
                 // `d` is the original data object for the row
                 // let overtime = parseFloat(d.overtime);
@@ -184,32 +297,48 @@
                     '<td>' + d.email + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><strong>Base salary</strong></td>' +
-                    '<td>' + d.base + '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><strong> Day off</strong></td>' +
-                    '<td>' + d.dayoff + '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><strong> Day on</strong> </td>' +
+                    '<td><strong>Number of day on</strong></td>' +
                     '<td>' + d.dayon + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><strong> Day left </strong></td>' +
-                    '<td>'+ d.dayleave + '</td>' +
+                    '<td><strong>Number of day off</strong></td>' +
+                    '<td>' + d.dayoff + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><strong> Overtime hours</strong> </td>' +
+                    '<td><strong>Overtime hours</strong> </td>' +
                     '<td>' + d.overtime + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><strong> Undertime hours</strong> </td>' +
-                    '<td>' + d.undertime + '</td>' +
+                    '<td><strong>Undertime hours </strong></td>' +
+                    '<td>'+ d.undertime + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><strong> Max leaves</strong> </td>' +
+                    '<td><strong>Number of leaves</strong> </td>' +
+                    '<td>' + d.dayleave + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong> Allowance</strong> </td>' +
+                    '<td>' + d.allowance + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong> Subsidy</strong> </td>' +
+                    '<td>' + d.subsidy + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong> Insurance</strong> </td>' +
+                    '<td>' + d.insurance + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong>Base salary</strong> </td>' +
+                    '<td>' + d.base + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong>Number of maximum leaves</strong> </td>' +
                     '<td>' + d.maxleaves + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><strong>Total salary</strong> </td>' +
+                    '<td>' + d.salary + '</td>' +
                     '</tr>'
                 this_format += '</table>';
                 return this_format;
@@ -218,10 +347,11 @@
             $(document).ready(function() {
 
                 let status_calculate = '{{$status_calculate??'null'}}';
+                let name_fail_cal = '{{$name??'null'}}';
                 if (status_calculate == 'true'){
                     window.alert('Calculate salary success');
                 } else if (status_calculate == 'false') {
-                    window.alert('There is a null field');
+                    window.alert('There is a null field at employee '+name_fail_cal);
                 }
 
                 let table = $('#list_salaries').DataTable({

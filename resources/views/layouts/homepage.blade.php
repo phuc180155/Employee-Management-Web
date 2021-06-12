@@ -59,35 +59,49 @@
                 <a class="navbar-brand" href="#">
                     <img src="https://i.pinimg.com/originals/3f/3d/d9/3f3dd9219f7bb1c9617cf4f154b70383.jpg" alt="Logo" style="width:40px;">
                 </a>
+                <!-- Links -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{route('login')}}">Login</a>
+                </li>
+
                 <!-- Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                        Dropdown link
+                        Company
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{route('register')}}">Register</a>
-                        <a class="dropdown-item" href="{{route('login')}}">Login</a>
+                        <a class="dropdown-item" href="#">Public Information</a>
+                        <a class="dropdown-item" href="#">Organizational Structure</a>
+                        <a class="dropdown-item" href="#">Employees</a>
                     </div>
                 </li>
 
-                <!-- Links -->
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Active</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
+                <!-- Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                       Recruitment
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">News</a>
+                        <a class="dropdown-item" href="#">Application</a>
+                    </div>
                 </li>
 
+
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link" href="#">Link</a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link" href="#">Link</a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link disabled" href="#">Disabled</a>--}}
+{{--                </li>--}}
+
                 <!-- Navbar text: Bởi vì những đường trên là link nên nếu thêm text thì không thẳng hàng !-->
-                <span class="navbar-text">
-                        Navbar text
-                    </span>
+{{--                <span class="navbar-text">--}}
+{{--                        Navbar text--}}
+{{--                    </span>--}}
             </ul>
 
             <!-- Navbar and button !-->

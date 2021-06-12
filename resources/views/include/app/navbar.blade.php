@@ -13,7 +13,7 @@
                 <li class="nav-item dropdown user user-menu">
                     <a href="#" class="nav-link" data-toggle="dropdown">
                         @can('employee-access')
-                            <img style="width:40px !important; height: 40px !important;" src="{{\Illuminate\Support\Facades\Storage::url(Auth::user()->employee->first()->image_profile)}}" class="user-image rounded-circle elevation-2" alt="user_image">
+                            <img style="width:40px !important; height: 40px !important;" src="{{\Illuminate\Support\Facades\Storage::url(Auth::user()->employee()->first()->image_profile)}}" class="user-image rounded-circle elevation-2" alt="user_image">
                         @endcan
                         @can('admin-access')
                             <img style="width:40px !important; height: 40px !important;" src="/img/theme_addemployee.jpg" class="user-image rounded-circle elevation-2" alt="user_image">
@@ -26,7 +26,7 @@
                         <li style="width: 275px; height: 175px; text-align: center;vertical-align: middle;align-items: center" class="user-header bg-primary">
                             <div style="margin: 0; top: 50%; -ms-transform: translateY(-50%); position: relative; transform: translateY(-50%);">
                                 @can('employee-access')
-                                    <img style="width:100px !important; height: 100px !important;" src="{{\Illuminate\Support\Facades\Storage::url(Auth::user()->employee->first()->image_profile)}}" class="img rounded-circle elevation-2" alt="user_image">
+                                    <img style="width:100px !important; height: 100px !important;" src="{{\Illuminate\Support\Facades\Storage::url(Auth::user()->employee()->first()->image_profile)}}" class="img rounded-circle elevation-2" alt="user_image">
                                 @endcan
                                 @can('admin-access')
                                     <img style="width:100px !important; height: 100px !important;" src="/img/theme_addemployee.jpg" class="img rounded-circle elevation-2" alt="user_image">
@@ -37,10 +37,12 @@
 
                         <hr>
                         @can('employee-access')
-                            <li style="margin-top: -8px; margin-left: 10px;"> <a href="#" class="btn btn-info btn-flat" style="width: 135px; ">
-                                    <h6 style="margin-left: -20px; margin-top: 5px"><strong>Profile</strong></h6>
-                                </a>
+                            <li style="margin-top: -8px; margin-left: 10px;">
+                                <button class="btn btn-info btn-flat" style="width: 135px;" data-toggle="modal" data-target=".animate" data-ui-class="a-roll">
+                                    <h6 style="margin-left: -20px; margin-top: 5px"><strong>&nbsp;&nbsp;Profile</strong></h6>
+                                </button>
                             </li>
+
                         @endcan
                         <li class="dropdown-divider"></li>
 
